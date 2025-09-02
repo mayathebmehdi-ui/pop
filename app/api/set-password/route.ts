@@ -7,41 +7,63 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
+    // DETAILED LOGGING FOR DEBUGGING
+    console.log('=== SET-PASSWORD API DEBUG ===')
+    console.log('Host:', request.headers.get('host'))
+    console.log('User-Agent:', request.headers.get('user-agent'))
+    console.log('Origin:', request.headers.get('origin'))
+    console.log('Referer:', request.headers.get('referer'))
+    
     // Get user from session - try multiple methods to read cookie
     let userId: string | null = null
     
     // Method 1: From request cookies
     const requestCookie = request.cookies.get('user-id')
+    console.log('Method 1 - request.cookies.get("user-id"):', requestCookie)
     if (requestCookie) {
       userId = requestCookie.value
+      console.log('✅ Found userId via Method 1:', userId)
     }
     
     // Method 2: From next/headers cookies (fallback)
     if (!userId) {
       const headersCookie = nextCookies().get('user-id')
+      console.log('Method 2 - nextCookies().get("user-id"):', headersCookie)
       if (headersCookie) {
         userId = headersCookie.value
+        console.log('✅ Found userId via Method 2:', userId)
       }
     }
     
     // Method 3: Parse raw cookie header (last resort)
     if (!userId) {
       const rawCookieHeader = request.headers.get('cookie')
+      console.log('Method 3 - Raw cookie header:', rawCookieHeader)
       if (rawCookieHeader) {
         const userIdMatch = rawCookieHeader.match(/user-id=([^;]+)/)
+        console.log('Method 3 - Regex match result:', userIdMatch)
         if (userIdMatch) {
           userId = userIdMatch[1]
+          console.log('✅ Found userId via Method 3:', userId)
         }
       }
     }
     
+    // Log all request cookies for debugging
+    const allCookies = Object.fromEntries(request.cookies.getAll().map(c => [c.name, c.value]))
+    console.log('All request cookies:', allCookies)
+    
     if (!userId) {
-      console.error('No user-id cookie found in set-password API')
+      console.error('❌ No user-id cookie found in set-password API after all methods')
+      console.log('=== END DEBUG ===')
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       )
     }
+    
+    console.log('✅ Final userId found:', userId)
+    console.log('=== END DEBUG ===')
 
     // Get user from database
     const user = await db.user.findUnique({
