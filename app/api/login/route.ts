@@ -49,14 +49,15 @@ export async function POST(request: NextRequest) {
       }
     })
     
-    // Set cookie - CLEAN VERSION with only one method
+    // Set cookie - OPTIMIZED for HTTP on IP address
     response.cookies.set({
       name: 'user-id',
       value: String(user.id),
-      httpOnly: false, // TEMPORARILY FALSE for debugging
-      secure: isHttps, // false in HTTP, true in HTTPS
-      sameSite: isHttps ? 'none' : 'lax',
+      httpOnly: false, // FALSE pour debug - remettre true une fois que ça marche
+      secure: false, // TOUJOURS FALSE en HTTP (même si proxy HTTPS)
+      sameSite: 'lax', // LAX fonctionne mieux que 'none' en HTTP
       path: '/',
+      // PAS de domain pour les adresses IP
       maxAge: 60 * 60 * 24 * 30, // 30 days
     })
     

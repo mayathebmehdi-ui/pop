@@ -96,8 +96,11 @@ export default function SetPasswordPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
-        body: JSON.stringify(formData),
+        credentials: 'include', // CRITIQUE pour envoyer les cookies
+        body: JSON.stringify({
+          ...formData,
+          email: new URLSearchParams(window.location.search).get('email') // Fallback email
+        }),
       })
 
       const data = await response.json()

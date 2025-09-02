@@ -119,13 +119,13 @@ export async function middleware(request: NextRequest) {
     response.headers.set('x-user-role', user.role)
     
     // Automatically renew session cookie to maintain persistence
-    // Configure for HTTP on EC2
+    // MÊME CONFIG que dans login pour cohérence
     response.cookies.set('user-id', user.id, {
-      httpOnly: true,
-      secure: false, // Always false for HTTP on EC2
+      httpOnly: false, // FALSE temporairement pour debug
+      secure: false, // TOUJOURS FALSE en HTTP
       sameSite: 'lax',
       path: '/',
-      domain: undefined, // Let browser set domain automatically
+      // PAS de domain pour IP
       maxAge: 60 * 60 * 24 * 30 // 30 days
     })
     
