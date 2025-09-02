@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { verifyPassword, hashPassword, validatePasswordStrength } from '@/lib/auth'
+import { verifyPassword, hashPassword, validatePasswordStrength, authenticateUser } from '@/lib/auth'
 import { cookies as nextCookies } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
@@ -53,8 +53,21 @@ export async function POST(request: NextRequest) {
     const allCookies = Object.fromEntries(request.cookies.getAll().map(c => [c.name, c.value]))
     console.log('All request cookies:', allCookies)
     
-    if (!userId) {
-      console.error('❌ No user-id cookie found in set-password API after all methods')
+    // Fallback: if no cookie, try email + current password (temp) to authenticate
+    let identifiedUserId = userId
+    const bodyForIdentify = await request.clone().json().catch(() => null as any)
+    if (!identifiedUserId && bodyForIdentify && bodyForIdentify.currentPassword && bodyForIdentify.email) {
+      try {
+        const maybe = await authenticateUser(String(bodyForIdentify.email), String(bodyForIdentify.currentPassword))
+        if (maybe) {
+          identifiedUserId = maybe.id
+          console.log('✅ Identified user via email+currentPassword fallback:', identifiedUserId)
+        }
+      } catch {}
+    }
+    
+    if (!identifiedUserId) {
+      console.error('❌ No user identified (no cookie, no fallback).')
       console.log('=== END DEBUG ===')
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -67,7 +80,7 @@ export async function POST(request: NextRequest) {
 
     // Get user from database
     const user = await db.user.findUnique({
-      where: { id: userId },
+      where: { id: identifiedUserId },
       select: { 
         id: true, 
         email: true,

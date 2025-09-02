@@ -65,8 +65,9 @@ export default function LoginPage() {
           
           // Check if user must reset password first
           if (data.user.mustReset) {
-            // Redirect to set password page for first-time login
-            window.location.href = '/set-password'
+            // Redirect to set password page for first-time login, include email for fallback
+            const emailParam = encodeURIComponent(data.user.email)
+            window.location.href = `/set-password?email=${emailParam}`
           } else if (data.user.role === 'ADMIN') {
             // Redirect to admin dashboard
             window.location.href = '/admin'
