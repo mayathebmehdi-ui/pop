@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { authenticateUser } from '@/lib/auth'
-import { cookies } from 'next/headers'
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { email, password } = body
+    const { email, password } = await request.json()
     
     if (!email || !password) {
       return NextResponse.json(
@@ -31,7 +29,14 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    // Set session cookie
+    // Detect HTTPS via proxy headers
+    const proto = (request.headers.get('x-forwarded-proto') || 'http').toLowerCase()
+    const isHttps = proto === 'https'
+    
+    console.log('🍪 Setting cookie for host:', request.headers.get('host'))
+    console.log('🍪 User ID to set:', user.id)
+    console.log('🍪 Protocol detected:', proto, 'isHttps:', isHttps)
+    
     const response = NextResponse.json({
       success: true,
       user: {
@@ -44,30 +49,21 @@ export async function POST(request: NextRequest) {
       }
     })
     
-    // Set HTTP-only cookie for session (30 days for better persistence)
-    // Configure for EC2 IP address and HTTP - CRITICAL SETTINGS
-    const host = request.headers.get('host') || ''
-    console.log('🍪 Setting cookie for host:', host)
-    console.log('🍪 User ID to set:', user.id)
-    
-    // Set cookie with explicit domain for IP addresses
-    const cookieOptions = {
-      httpOnly: false, // TEMPORARILY FALSE for debugging - allows JS access
-      secure: false, // Always false for HTTP on EC2
-      sameSite: 'lax' as const,
+    // Set cookie - CLEAN VERSION with only one method
+    response.cookies.set({
+      name: 'user-id',
+      value: String(user.id),
+      httpOnly: false, // TEMPORARILY FALSE for debugging
+      secure: isHttps, // false in HTTP, true in HTTPS
+      sameSite: isHttps ? 'none' : 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 30, // 30 days
-      // For IP addresses, don't set domain at all
-    }
+    })
     
-    response.cookies.set('user-id', user.id, cookieOptions)
+    // Prevent caching of auth response
+    response.headers.set('Cache-Control', 'no-store, max-age=0')
     
-    // Also try setting via Set-Cookie header directly as fallback
-    const cookieValue = `user-id=${user.id}; Path=/; Max-Age=${60 * 60 * 24 * 30}; SameSite=Lax`
-    response.headers.append('Set-Cookie', cookieValue)
-    
-    console.log('🍪 Cookie set in response with options:', cookieOptions)
-    console.log('🍪 Also set via Set-Cookie header:', cookieValue)
+    console.log('🍪 Cookie set successfully')
     
     return response
   } catch (error) {

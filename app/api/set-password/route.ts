@@ -53,17 +53,31 @@ export async function POST(request: NextRequest) {
     const allCookies = Object.fromEntries(request.cookies.getAll().map(c => [c.name, c.value]))
     console.log('All request cookies:', allCookies)
     
-    // Fallback: if no cookie, try email + current password (temp) to authenticate
+    // Read body for both cookie and fallback scenarios
+    const body = await request.json()
+    const { currentPassword, newPassword, confirmPassword } = body
+    
+    // Fallback: if no cookie, try email from query param + current password to authenticate
     let identifiedUserId = userId
-    const bodyForIdentify = await request.clone().json().catch(() => null as any)
-    if (!identifiedUserId && bodyForIdentify && bodyForIdentify.currentPassword && bodyForIdentify.email) {
-      try {
-        const maybe = await authenticateUser(String(bodyForIdentify.email), String(bodyForIdentify.currentPassword))
-        if (maybe) {
-          identifiedUserId = maybe.id
-          console.log('✅ Identified user via email+currentPassword fallback:', identifiedUserId)
+    if (!identifiedUserId && currentPassword) {
+      // Try to get email from URL params or body
+      const url = new URL(request.url)
+      const emailFromQuery = url.searchParams.get('email') || body.email
+      
+      if (emailFromQuery) {
+        try {
+          console.log('🔄 Attempting fallback auth with email:', emailFromQuery)
+          const maybe = await authenticateUser(String(emailFromQuery), String(currentPassword))
+          if (maybe && maybe.mustReset) {
+            identifiedUserId = maybe.id
+            console.log('✅ Identified user via email+currentPassword fallback:', identifiedUserId)
+          } else if (maybe) {
+            console.log('⚠️ User found but mustReset=false, rejecting fallback')
+          }
+        } catch (e) {
+          console.log('❌ Fallback auth failed:', e)
         }
-      } catch {}
+      }
     }
     
     if (!identifiedUserId) {
@@ -104,9 +118,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
-
-    const body = await request.json()
-    const { currentPassword, newPassword, confirmPassword } = body
 
     if (!currentPassword || !newPassword || !confirmPassword) {
       return NextResponse.json(
