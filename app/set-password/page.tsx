@@ -107,9 +107,24 @@ export default function SetPasswordPage() {
 
       if (response.ok) {
         setIsSuccess(true)
-        setTimeout(() => {
-          router.push('/app')
-        }, 2000)
+        
+        // Check if user info is returned (means auto-login successful)
+        if (data.user) {
+          console.log('🎉 Password set + auto-login successful, redirecting to app...')
+          setTimeout(() => {
+            // Redirect based on user role
+            if (data.user.role === 'ADMIN') {
+              router.push('/admin')
+            } else {
+              router.push('/app')
+            }
+          }, 1500) // Shorter delay since user is logged in
+        } else {
+          // Fallback: redirect to login if no user info
+          setTimeout(() => {
+            router.push('/login')
+          }, 2000)
+        }
       } else {
         if (data.details && Array.isArray(data.details)) {
           setErrors({ submit: data.details.join(', ') })
@@ -170,7 +185,7 @@ export default function SetPasswordPage() {
                 </h1>
                 
                 <p className="text-slate-400 mb-6">
-                  Your password has been updated. Redirecting to the application...
+                  Your password has been updated and you're now logged in. Redirecting to your dashboard...
                 </p>
                 
                 <div className="w-8 h-8 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin mx-auto"></div>

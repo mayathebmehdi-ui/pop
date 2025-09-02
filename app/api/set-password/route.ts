@@ -98,6 +98,9 @@ export async function POST(request: NextRequest) {
       select: { 
         id: true, 
         email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
         hashedPassword: true,
         isActive: true,
         mustReset: true
@@ -178,10 +181,36 @@ export async function POST(request: NextRequest) {
 
     console.log(`✅ First-time password set for user: ${user.email}`)
 
-    return NextResponse.json({
+    // Create response with user info for auto-login
+    const response = NextResponse.json({
       success: true,
-      message: 'Password set successfully. You can now use the application.'
+      message: 'Password set successfully. You can now use the application.',
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        mustReset: false // Password has been reset
+      }
     })
+
+    // Set session cookie to keep user logged in
+    response.cookies.set({
+      name: 'user-id',
+      value: String(user.id),
+      httpOnly: false, // FALSE temporairement pour debug
+      secure: false, // FALSE en HTTP
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+    })
+
+    response.headers.set('Cache-Control', 'no-store, max-age=0')
+    
+    console.log('🍪 Session cookie set after password change')
+
+    return response
 
   } catch (error) {
     console.error('Set password error:', error)
