@@ -4,6 +4,13 @@ import type { NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   
+  // Helper function to build correct URL using host header
+  const buildUrl = (path: string) => {
+    const host = request.headers.get('host') || '34.216.99.253:3000'
+    const protocol = request.nextUrl.protocol === 'https:' ? 'https' : 'http'
+    return `${protocol}://${host}${path}`
+  }
+  
   // Skip middleware for public routes and API routes
   if (
     pathname.startsWith('/_next') ||
@@ -22,7 +29,7 @@ export async function middleware(request: NextRequest) {
   if (pathname === '/set-password') {
     const userIdCookie = request.cookies.get('user-id')
     if (!userIdCookie) {
-      return NextResponse.redirect(new URL('/login', request.url))
+      return NextResponse.redirect(buildUrl('/login'))
     }
     // Let authenticated users access /set-password, validation will happen in the API
     return NextResponse.next()
@@ -53,17 +60,17 @@ export async function middleware(request: NextRequest) {
       }
       const user = await validateResponse.json()
       if (!user.isActive) {
-        return NextResponse.redirect(new URL('/inactive', request.url))
+        return NextResponse.redirect(buildUrl('/inactive'))
       }
       const target = user.role === 'ADMIN' ? '/admin' : '/app'
-      return NextResponse.redirect(new URL(target, request.url))
+      return NextResponse.redirect(buildUrl(target))
     } catch {
       return NextResponse.next()
     }
   }
   
   if (!userIdCookie) {
-    return NextResponse.redirect(new URL('/login', request.url))
+    return NextResponse.redirect(buildUrl('/login'))
   }
   
   try {
@@ -78,7 +85,7 @@ export async function middleware(request: NextRequest) {
       // Only redirect to login if it's actually an authentication error
       // Network errors or temporary issues shouldn't force logout
       if (validateResponse.status === 401) {
-        const response = NextResponse.redirect(new URL('/login', request.url))
+        const response = NextResponse.redirect(buildUrl('/login'))
         response.cookies.delete('user-id')
         return response
       } else {
@@ -93,17 +100,17 @@ export async function middleware(request: NextRequest) {
     
     // Redirect to set-password if mustReset is true and not already on set-password page
     if (user.mustReset && pathname !== '/set-password') {
-      return NextResponse.redirect(new URL('/set-password', request.url))
+      return NextResponse.redirect(buildUrl('/set-password'))
     }
     
     // Check if user is active
     if (!user.isActive) {
-      return NextResponse.redirect(new URL('/inactive', request.url))
+      return NextResponse.redirect(buildUrl('/inactive'))
     }
     
     // Check admin routes
     if (pathname.startsWith('/admin') && user.role !== 'ADMIN') {
-      return NextResponse.redirect(new URL('/app/search', request.url))
+      return NextResponse.redirect(buildUrl('/app/search'))
     }
     
     // Add user info to headers for downstream use
