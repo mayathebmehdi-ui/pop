@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { verifyPassword, hashPassword, validatePasswordStrength } from '@/lib/auth'
+import { cookies as nextCookies } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
     // Get user from session (read cookie from the incoming request directly)
-    const userIdCookie = request.cookies.get('user-id')
+    const userIdCookie = request.cookies.get('user-id') || nextCookies().get('user-id')
     
     if (!userIdCookie) {
       return NextResponse.json(
