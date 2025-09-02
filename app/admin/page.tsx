@@ -105,13 +105,26 @@ export default function AdminPage() {
 
   const logout = async () => {
     try {
-      const res = await fetch('/api/logout', { method: 'POST' })
+      console.log('🚪 Admin logout clicked...')
+      const res = await fetch('/api/logout', { 
+        method: 'POST',
+        credentials: 'include' // Important pour envoyer les cookies
+      })
+      console.log('🚪 Logout response:', res.status)
+      
       if (res.ok) {
-        router.replace('/login')
+        console.log('✅ Logout successful, redirecting to login...')
+        // Force reload to clear any cached state
+        window.location.href = '/login'
+      } else {
+        console.error('❌ Logout failed:', res.status)
+        // Fallback: redirect anyway to clear state
+        window.location.href = '/login'
       }
-    } catch (e) {
-      console.error('Logout error', e)
-      router.replace('/login')
+    } catch (error) {
+      console.error('❌ Logout error:', error)
+      // Fallback: redirect anyway
+      window.location.href = '/login'
     }
   }
 

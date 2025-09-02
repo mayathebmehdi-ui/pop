@@ -1,15 +1,23 @@
 import { NextResponse } from 'next/server'
 
 export async function POST() {
-  const response = NextResponse.json({ success: true })
-  // Clear session cookie
+  console.log('🚪 Logout API called')
+  
+  const response = NextResponse.json({ 
+    success: true, 
+    message: 'Logged out successfully' 
+  })
+  
+  // Clear session cookie - SAME CONFIG as login for consistency
   response.cookies.set('user-id', '', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    httpOnly: false, // Same as login for consistency
+    secure: false, // FALSE en HTTP
     sameSite: 'lax',
-    expires: new Date(0),
+    expires: new Date(0), // Expire immediately
     path: '/',
   })
+  
+  console.log('✅ Session cookie cleared')
   return response
 }
 
