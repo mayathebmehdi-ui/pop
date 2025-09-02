@@ -13,14 +13,19 @@ export async function POST(request: NextRequest) {
     }
     
     // Authenticate user
+    console.log('🔐 Attempting login for email:', email.toLowerCase())
     const user = await authenticateUser(email, password)
     
     if (!user) {
+      console.log('❌ Authentication failed for:', email.toLowerCase())
+      console.log('❌ Either user not found or password incorrect')
       return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }
       )
     }
+    
+    console.log('✅ User authenticated successfully:', user.email, 'Role:', user.role)
     
     if (!user.isActive) {
       return NextResponse.json(
