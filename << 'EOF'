@@ -1,0 +1,5 @@
+       email        | role  | isActive | mustReset 
+--------------------+-------+----------+-----------
+ mehdi@tonexora.com | ADMIN | t        | t
+(1 row)
+
