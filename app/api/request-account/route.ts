@@ -18,7 +18,8 @@ export async function POST(request: NextRequest) {
     
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
+    const normalizedEmail = String(email).trim().toLowerCase()
+    if (!emailRegex.test(normalizedEmail)) {
       return NextResponse.json(
         { error: 'Invalid email format' },
         { status: 400 }
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
     console.log('=== NEW ACCOUNT REQUEST ===')
     console.log('Timestamp:', new Date().toISOString())
     console.log('Company:', company)
-    console.log('Email:', email)
+    console.log('Email:', normalizedEmail)
     console.log('Use Case:', useCase)
     console.log('Expected Volume:', expectedVolume)
     console.log('Message:', message || 'No additional message')
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
     
     // Create user with a temporary password and send email via SMTP
     try {
-      const { user, tempPassword } = await createUserWithTempPassword({ email })
+      const { user, tempPassword } = await createUserWithTempPassword({ email: normalizedEmail })
       await sendTempPasswordEmail(user.email, tempPassword)
       console.log('✅ Temp password email queued/sent to:', user.email)
     } catch (err) {
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
       // Fallback: still email a temporary password even if DB is unavailable
       try {
         const tempPassword = generateTemporaryPassword()
-        await sendTempPasswordEmail(email, tempPassword)
+        await sendTempPasswordEmail(normalizedEmail, tempPassword)
         console.log('✅ Temp password emailed without DB user creation (fallback).')
       } catch (mailErr) {
         console.error('❌ Failed to send fallback email:', mailErr)

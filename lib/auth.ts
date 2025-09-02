@@ -25,12 +25,13 @@ export async function createUserWithTempPassword(data: {
   lastName?: string
   role?: 'USER' | 'ADMIN'
 }): Promise<{ user: User; tempPassword: string }> {
+  const normalizedEmail = data.email.trim().toLowerCase()
   const tempPassword = generateTemporaryPassword()
   const hashedPassword = await hashPassword(tempPassword)
   
   const user = await db.user.create({
     data: {
-      email: data.email,
+      email: normalizedEmail,
       firstName: data.firstName,
       lastName: data.lastName,
       role: data.role || 'USER',
@@ -44,8 +45,9 @@ export async function createUserWithTempPassword(data: {
 }
 
 export async function authenticateUser(email: string, password: string): Promise<User | null> {
-  const user = await db.user.findUnique({
-    where: { email },
+  const normalizedEmail = email.trim().toLowerCase()
+  const user = await db.user.findFirst({
+    where: { email: { equals: normalizedEmail, mode: 'insensitive' } },
   })
   
   if (!user) {

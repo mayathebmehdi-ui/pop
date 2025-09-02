@@ -17,7 +17,8 @@ export async function POST(request: NextRequest) {
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
+    const normalizedEmail = email.trim().toLowerCase()
+    if (!emailRegex.test(normalizedEmail)) {
       return NextResponse.json(
         { error: 'Invalid email format' },
         { status: 400 }
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     // Find user by email
     const user = await db.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
       select: { 
         id: true, 
         email: true, 
