@@ -45,15 +45,16 @@ export async function POST(request: NextRequest) {
     })
     
     // Set HTTP-only cookie for session (30 days for better persistence)
-    // Use secure=true only when NEXT_PUBLIC_APP_URL starts with https
+    // Configure for EC2 IP address and HTTP
     const reqHost = request.headers.get('host') || ''
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || (reqHost ? `http://${reqHost}` : '')
-    const isHttps = appUrl.startsWith('https://') || request.nextUrl.protocol === 'https:'
+    const isHttps = request.nextUrl.protocol === 'https:' || reqHost.includes('https')
+    
     response.cookies.set('user-id', user.id, {
       httpOnly: true,
-      secure: isHttps,
+      secure: false, // Always false for HTTP on EC2
       sameSite: 'lax',
       path: '/',
+      domain: undefined, // Let browser set domain automatically
       maxAge: 60 * 60 * 24 * 30 // 30 days
     })
     

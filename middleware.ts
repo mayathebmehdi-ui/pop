@@ -112,13 +112,13 @@ export async function middleware(request: NextRequest) {
     response.headers.set('x-user-role', user.role)
     
     // Automatically renew session cookie to maintain persistence
-    // Use Secure only when running behind HTTPS
-    const isHttps = request.nextUrl.protocol === 'https:' || (process.env.NEXT_PUBLIC_APP_URL || '').startsWith('https://')
+    // Configure for HTTP on EC2
     response.cookies.set('user-id', user.id, {
       httpOnly: true,
-      secure: isHttps,
+      secure: false, // Always false for HTTP on EC2
       sameSite: 'lax',
       path: '/',
+      domain: undefined, // Let browser set domain automatically
       maxAge: 60 * 60 * 24 * 30 // 30 days
     })
     

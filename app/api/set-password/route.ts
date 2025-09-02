@@ -7,10 +7,36 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
-    // Get user from session (read cookie from the incoming request directly)
-    const userIdCookie = request.cookies.get('user-id') || nextCookies().get('user-id')
+    // Get user from session - try multiple methods to read cookie
+    let userId: string | null = null
     
-    if (!userIdCookie) {
+    // Method 1: From request cookies
+    const requestCookie = request.cookies.get('user-id')
+    if (requestCookie) {
+      userId = requestCookie.value
+    }
+    
+    // Method 2: From next/headers cookies (fallback)
+    if (!userId) {
+      const headersCookie = nextCookies().get('user-id')
+      if (headersCookie) {
+        userId = headersCookie.value
+      }
+    }
+    
+    // Method 3: Parse raw cookie header (last resort)
+    if (!userId) {
+      const rawCookieHeader = request.headers.get('cookie')
+      if (rawCookieHeader) {
+        const userIdMatch = rawCookieHeader.match(/user-id=([^;]+)/)
+        if (userIdMatch) {
+          userId = userIdMatch[1]
+        }
+      }
+    }
+    
+    if (!userId) {
+      console.error('No user-id cookie found in set-password API')
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -19,7 +45,7 @@ export async function POST(request: NextRequest) {
 
     // Get user from database
     const user = await db.user.findUnique({
-      where: { id: userIdCookie.value },
+      where: { id: userId },
       select: { 
         id: true, 
         email: true,
