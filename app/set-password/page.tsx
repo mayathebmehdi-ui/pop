@@ -33,6 +33,17 @@ export default function SetPasswordPage() {
 
   const router = useRouter()
 
+  // DEBUG: Check cookies on page load
+  useEffect(() => {
+    console.log('🍪 CLIENT DEBUG: All cookies:', document.cookie)
+    console.log('🍪 CLIENT DEBUG: Current host:', window.location.host)
+    
+    // Try to find user-id cookie manually
+    const cookies = document.cookie.split(';')
+    const userIdCookie = cookies.find(c => c.trim().startsWith('user-id='))
+    console.log('🍪 CLIENT DEBUG: Found user-id cookie:', userIdCookie)
+  }, [])
+
   // Check password strength in real-time
   useEffect(() => {
     const password = formData.newPassword

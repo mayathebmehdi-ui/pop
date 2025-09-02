@@ -45,18 +45,20 @@ export async function POST(request: NextRequest) {
     })
     
     // Set HTTP-only cookie for session (30 days for better persistence)
-    // Configure for EC2 IP address and HTTP
-    const reqHost = request.headers.get('host') || ''
-    const isHttps = request.nextUrl.protocol === 'https:' || reqHost.includes('https')
+    // Configure for EC2 IP address and HTTP - CRITICAL SETTINGS
+    console.log('🍪 Setting cookie for host:', request.headers.get('host'))
+    console.log('🍪 User ID to set:', user.id)
     
     response.cookies.set('user-id', user.id, {
-      httpOnly: true,
+      httpOnly: false, // TEMPORARILY FALSE for debugging - allows JS access
       secure: false, // Always false for HTTP on EC2
       sameSite: 'lax',
       path: '/',
-      domain: undefined, // Let browser set domain automatically
+      // NO domain restriction for IP addresses
       maxAge: 60 * 60 * 24 * 30 // 30 days
     })
+    
+    console.log('🍪 Cookie set in response')
     
     return response
   } catch (error) {
