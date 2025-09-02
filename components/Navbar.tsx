@@ -163,7 +163,7 @@ export function Navbar({ user }: NavbarProps) {
                   <Link href="/login">Login</Link>
                 </Button>
                 <Button asChild>
-                  <Link href="/request-account">Request Account</Link>
+                  <Link href="/request-account">Create Account</Link>
                 </Button>
               </>
             )}
@@ -244,7 +244,7 @@ export function Navbar({ user }: NavbarProps) {
                   </Button>
                   <Button className="w-full" asChild>
                     <Link href="/request-account" onClick={() => setIsOpen(false)}>
-                      Request Account
+                      Create Account
                     </Link>
                   </Button>
                 </div>

@@ -330,7 +330,7 @@ export default function Home() {
           </div>
         </Section>
 
-        {/* Request Account */}
+        {/* Create Account */}
         <Section id="request-account">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold text-foreground mb-4">
