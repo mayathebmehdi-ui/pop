@@ -55,17 +55,26 @@ export default function LoginPage() {
       const data = await response.json()
 
       if (response.ok) {
-        // Check if user must reset password first
-        if (data.user.mustReset) {
-          // Redirect to set password page for first-time login
-          window.location.href = '/set-password'
-        } else if (data.user.role === 'ADMIN') {
-          // Redirect to admin dashboard
-          window.location.href = '/admin'
-        } else {
-          // Redirect to main app
-          window.location.href = '/app'
-        }
+        // DEBUG: Check if cookie was set after login
+        console.log('🍪 LOGIN SUCCESS: Checking cookies after login...')
+        console.log('🍪 All cookies after login:', document.cookie)
+        
+        // Wait a bit for cookie to be set, then check
+        setTimeout(() => {
+          console.log('🍪 Cookies after 500ms delay:', document.cookie)
+          
+          // Check if user must reset password first
+          if (data.user.mustReset) {
+            // Redirect to set password page for first-time login
+            window.location.href = '/set-password'
+          } else if (data.user.role === 'ADMIN') {
+            // Redirect to admin dashboard
+            window.location.href = '/admin'
+          } else {
+            // Redirect to main app
+            window.location.href = '/app'
+          }
+        }, 500)
       } else {
         // Login failed
         setErrors({ submit: data.error || 'Login failed' })

@@ -46,19 +46,28 @@ export async function POST(request: NextRequest) {
     
     // Set HTTP-only cookie for session (30 days for better persistence)
     // Configure for EC2 IP address and HTTP - CRITICAL SETTINGS
-    console.log('🍪 Setting cookie for host:', request.headers.get('host'))
+    const host = request.headers.get('host') || ''
+    console.log('🍪 Setting cookie for host:', host)
     console.log('🍪 User ID to set:', user.id)
     
-    response.cookies.set('user-id', user.id, {
+    // Set cookie with explicit domain for IP addresses
+    const cookieOptions = {
       httpOnly: false, // TEMPORARILY FALSE for debugging - allows JS access
       secure: false, // Always false for HTTP on EC2
-      sameSite: 'lax',
+      sameSite: 'lax' as const,
       path: '/',
-      // NO domain restriction for IP addresses
-      maxAge: 60 * 60 * 24 * 30 // 30 days
-    })
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      // For IP addresses, don't set domain at all
+    }
     
-    console.log('🍪 Cookie set in response')
+    response.cookies.set('user-id', user.id, cookieOptions)
+    
+    // Also try setting via Set-Cookie header directly as fallback
+    const cookieValue = `user-id=${user.id}; Path=/; Max-Age=${60 * 60 * 24 * 30}; SameSite=Lax`
+    response.headers.append('Set-Cookie', cookieValue)
+    
+    console.log('🍪 Cookie set in response with options:', cookieOptions)
+    console.log('🍪 Also set via Set-Cookie header:', cookieValue)
     
     return response
   } catch (error) {
