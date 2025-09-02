@@ -11,11 +11,20 @@ export async function middleware(request: NextRequest) {
     pathname === '/' ||
     pathname === '/request-account' ||
     pathname === '/forgot-password' ||
-    pathname === '/set-password' ||
     pathname === '/reset-password' ||
     pathname.startsWith('/static') ||
     pathname === '/favicon.ico'
   ) {
+    return NextResponse.next()
+  }
+  
+  // Special handling for /set-password - requires authentication but allows mustReset users
+  if (pathname === '/set-password') {
+    const userIdCookie = request.cookies.get('user-id')
+    if (!userIdCookie) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+    // Let authenticated users access /set-password, validation will happen in the API
     return NextResponse.next()
   }
   
@@ -82,8 +91,10 @@ export async function middleware(request: NextRequest) {
     
     const user = await validateResponse.json()
     
-    // Optional: redirect to reset password if mustReset is true (but allow access)
-    // Users can still access the app even if mustReset is true
+    // Redirect to set-password if mustReset is true and not already on set-password page
+    if (user.mustReset && pathname !== '/set-password') {
+      return NextResponse.redirect(new URL('/set-password', request.url))
+    }
     
     // Check if user is active
     if (!user.isActive) {
