@@ -50,13 +50,19 @@ print_step "Configuration base de données PostgreSQL"
 
 # Générer le client Prisma
 echo "Génération du client Prisma..."
-npx prisma generate > /dev/null 2>&1
+if npx prisma generate; then
+  print_success "Client Prisma généré"
+else
+  print_warning "Échec de la génération Prisma — on continue le démarrage"
+fi
 
 # Appliquer le schéma (sans --accept-data-loss pour préserver les données RDS)
 echo "Application du schéma PostgreSQL..."
-npx prisma db push > /dev/null 2>&1
-
-print_success "Base PostgreSQL configurée"
+if npx prisma db push; then
+  print_success "Base PostgreSQL configurée"
+else
+  print_warning "Base PostgreSQL injoignable — démarrage en mode dégradé (sans DB)"
+fi
 
 # Étape 3: Création utilisateur admin
 print_step "Création utilisateur admin"
@@ -108,10 +114,12 @@ async function createAdmin() {
 createAdmin();
 EOF
 
-node create_admin_temp.js
+if node create_admin_temp.js; then
+  print_success "Utilisateur admin configuré"
+else
+  print_warning "Création admin ignorée (DB indisponible)"
+fi
 rm create_admin_temp.js
-
-print_success "Utilisateur admin configuré"
 
 # Étape 4: Vérification configuration
 print_step "Vérification configuration"

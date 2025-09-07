@@ -19,12 +19,12 @@ const translations = {
     'nav.compliance': 'Compliance',
     'nav.docs': 'Docs',
     'nav.login': 'Login',
-    'nav.requestAccount': 'Create Account',
+    'nav.requestAccount': 'Request Account',
     
     // Hero
     'hero.title': 'Instant, reliable death-status checks for enterprises.',
     'hero.subtitle': 'Verify a deceased status in seconds across public sources with auditable confidence—via API or dashboard.',
-    'hero.primaryCta': 'Create Account',
+    'hero.primaryCta': 'Request Account',
     'hero.secondaryCta': 'Login',
     'hero.reassurance': 'Batch CSV • REST & Webhooks • Audit Logs • 99.9% SLA',
     
@@ -57,7 +57,7 @@ const translations = {
     
     // CTA Band
     'ctaBand.text': 'Ready to verify responsibly?',
-    'ctaBand.primary': 'Create Account',
+    'ctaBand.primary': 'Request Account',
     'ctaBand.secondary': 'Login',
     
     // Footer

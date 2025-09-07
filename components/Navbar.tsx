@@ -98,9 +98,14 @@ export function Navbar({ user }: NavbarProps) {
                 />
                 <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-opacity duration-300"></div>
               </div>
-              <span className="relative text-[21px] font-semibold tracking-[-0.02em] leading-none bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent antialiased transition-all duration-300 group-hover:from-white group-hover:via-white group-hover:to-slate-200 drop-shadow-[0_0_4px_rgba(255,255,255,0.15)] group-hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.25)] after:content-[''] after:absolute after:inset-0 after:rounded-md after:blur-sm after:bg-white/0 group-hover:after:bg-white/5 after:transition-colors after:duration-300 animate-[slideInRight_0.8s_ease-out_0.2s_forwards] opacity-0">
-                Deceased Status
-              </span>
+              <div className="flex flex-col items-start">
+                <span className="relative text-[21px] font-semibold tracking-[-0.02em] leading-none bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent antialiased transition-all duration-300 group-hover:from-white group-hover:via-white group-hover:to-slate-200 drop-shadow-[0_0_4px_rgba(255,255,255,0.15)] group-hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.25)] after:content-[''] after:absolute after:inset-0 after:rounded-md after:blur-sm after:bg-white/0 group-hover:after:bg-white/5 after:transition-colors after:duration-300 animate-[slideInRight_0.8s_ease-out_0.2s_forwards] opacity-0">
+                  Deceased Status
+                </span>
+                <span className="relative text-[12px] font-medium tracking-wide text-slate-400 mt-[-2px] transition-all duration-300 group-hover:text-slate-300 animate-[slideInRight_0.8s_ease-out_0.4s_forwards] opacity-0">
+                  Services
+                </span>
+              </div>
             </Link>
           </div>
 
@@ -163,7 +168,7 @@ export function Navbar({ user }: NavbarProps) {
                   <Link href="/login">Login</Link>
                 </Button>
                 <Button asChild>
-                  <Link href="/request-account">Create Account</Link>
+                  <Link href="/request-account">Request Account</Link>
                 </Button>
               </>
             )}
@@ -244,7 +249,7 @@ export function Navbar({ user }: NavbarProps) {
                   </Button>
                   <Button className="w-full" asChild>
                     <Link href="/request-account" onClick={() => setIsOpen(false)}>
-                      Create Account
+                      Request Account
                     </Link>
                   </Button>
                 </div>

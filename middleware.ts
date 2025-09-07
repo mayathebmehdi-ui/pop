@@ -15,12 +15,17 @@ export async function middleware(request: NextRequest) {
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
+    pathname.startsWith('/images') ||
+    pathname.startsWith('/fonts') ||
     pathname === '/' ||
     pathname === '/request-account' ||
     pathname === '/forgot-password' ||
     pathname === '/reset-password' ||
     pathname.startsWith('/static') ||
-    pathname === '/favicon.ico'
+    pathname === '/favicon.ico' ||
+    pathname === '/favicon.svg' ||
+    pathname === '/robots.txt' ||
+    pathname === '/sitemap.xml'
   ) {
     return NextResponse.next()
   }
@@ -148,6 +153,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|images|fonts|robots.txt|sitemap.xml|favicon.svg).*)',
   ],
 }
