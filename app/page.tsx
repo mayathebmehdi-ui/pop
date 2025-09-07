@@ -33,7 +33,6 @@ import { Button } from '@/components/ui/button'
 import { FeatureCard } from '@/components/FeatureCard'
 import { StepCard } from '@/components/StepCard'
 import { BadgeRow } from '@/components/BadgeRow'
-import { HeroPreview } from '@/components/hero-preview'
 import { SecurityBadges } from '@/components/security-badges'
 import { Integrations } from '@/components/integrations'
 import { Hero } from '@/components/hero'
@@ -50,8 +49,8 @@ export default function Home() {
     },
     {
       icon: Settings,
-      title: 'API and Dashboard',
-      description: 'REST API with solid docs plus an intuitive dashboard for manual lookups.',
+      title: 'Dashboard',
+      description: 'An intuitive dashboard for manual lookups and team workflows.',
     },
     {
       icon: Upload,
@@ -127,10 +126,7 @@ export default function Home() {
       question: 'Is using this service legal and ethical?',
       answer: 'Yes—when used for legitimate business purposes. We access publicly available information and operate within legal frameworks. Customers must comply with applicable laws such as FCRA, HIPAA, and local privacy regulations.',
     },
-    {
-      question: 'How does the API work and what are the rate limits?',
-      answer: 'The REST API supports real-time queries with tiered rate limits by plan. Standard tiers include 1000 requests per hour; enterprise tiers offer higher limits and dedicated infrastructure.',
-    },
+    // Removed API-specific FAQ
     {
       question: 'Do you support batch processing and SLAs?',
       answer: 'CSV batch uploads handle up to 10,000 records per file with typical processing under 24 hours. Enterprise plans include guaranteed SLAs (99.9% uptime) and priority processing.',
@@ -290,7 +286,7 @@ export default function Home() {
               <div className="order-2 md:order-2">
                 <h3 className="text-xl font-semibold mb-2">Seamless Delivery and Sync</h3>
                 <p className="text-muted-foreground">
-                  Receive results in the dashboard, via CSV, or through API — kept current and simple to plug into your systems.
+                  Receive results in the dashboard or via CSV — kept current and simple to plug into your systems.
                 </p>
               </div>
             </motion.div>
@@ -304,7 +300,7 @@ export default function Home() {
               <h2 className="text-3xl font-bold text-foreground mb-3">Our Solution: A Purpose-Built Protocol</h2>
               <div className="max-w-3xl mx-auto space-y-3 text-muted-foreground text-lg">
                 <p>We combine AI with large-scale data intake to improve accuracy and completeness when confirming deceased status.</p>
-                <p>Designed to complement your workflows across UI, batch CSV, and API.</p>
+                <p>Designed to complement your workflows across UI and batch CSV.</p>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -318,7 +314,7 @@ export default function Home() {
               </div>
               <div className="border border-border rounded-xl p-5">
                 <h3 className="text-lg font-semibold mb-2">Flexible Integration</h3>
-                <p className="text-muted-foreground">Deliver findings via dashboard, CSV batch, or API — integrating seamlessly into client systems.</p>
+                <p className="text-muted-foreground">Deliver findings via dashboard or CSV batch — integrating seamlessly into client systems.</p>
               </div>
             </div>
           </div>
@@ -384,12 +380,7 @@ export default function Home() {
           </div>
         </Section>
 
-        {/* API & Batch Preview */}
-        <Section>
-          <div className="max-w-6xl mx-auto">
-            <HeroPreview />
-          </div>
-        </Section>
+        {/* Removed API preview section */}
 
         {/* Data Sources */}
         <Section id="data-sources">

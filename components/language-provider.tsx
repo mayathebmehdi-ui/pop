@@ -23,10 +23,10 @@ const translations = {
     
     // Hero
     'hero.title': 'Instant, reliable death-status checks for enterprises.',
-    'hero.subtitle': 'Verify a deceased status in seconds across public sources with auditable confidence—via API or dashboard.',
+    'hero.subtitle': 'Verify a deceased status in seconds across public sources with auditable confidence.',
     'hero.primaryCta': 'Request Account',
     'hero.secondaryCta': 'Login',
-    'hero.reassurance': 'Batch CSV • REST & Webhooks • Audit Logs • 99.9% SLA',
+    'hero.reassurance': 'Batch CSV • Audit Logs • 99.9% SLA',
     
     // Sensitivity
     'sensitivity.text': 'We handle sensitive lookups with care. PII minimization, encryption in transit & at rest, and transparent audit trails. SOC 2-aligned controls.',
@@ -34,18 +34,18 @@ const translations = {
     // How it works
     'howItWorks.title': 'How it works',
     'howItWorks.step1.title': 'Submit',
-    'howItWorks.step1.desc': 'Name + DOB (+ optional last-4 where permitted) via API, batch CSV, or UI.',
+    'howItWorks.step1.desc': 'Name + DOB (+ optional last-4 where permitted) via batch CSV or UI.',
     'howItWorks.step2.title': 'Match',
     'howItWorks.step2.desc': 'Multi-source correlation across public obituaries, memorials, public notices & permitted registries.',
     'howItWorks.step3.title': 'Deliver',
-    'howItWorks.step3.desc': 'Confidence score, evidence links, exportable PDF/CSV, optional webhooks.',
+    'howItWorks.step3.desc': 'Confidence score, evidence links, exportable PDF/CSV.',
     
     // Features
     'features.title': 'Key Features',
     'features.coverage': 'Coverage & confidence scoring',
-    'features.api': 'API + Dashboard',
+    'features.api': 'Dashboard',
     'features.batch': 'Batch uploads (CSV) & rate-limited queues',
-    'features.webhooks': 'Webhooks & change detection (watchlists)',
+    'features.webhooks': 'Change detection (watchlists)',
     'features.audit': 'Audit logs & exports (CSV/PDF)',
     'features.access': 'Role-based access & SSO-ready (SAML/OIDC)',
     'features.monitoring': 'Monitoring & uptime (status page)',
@@ -89,10 +89,10 @@ const translations = {
     
     // Hero
     'hero.title': 'Vérifications de statut de décès, instantanées et fiables, pour les entreprises.',
-    'hero.subtitle': 'Vérifiez un statut de décès en quelques secondes via des sources publiques, avec une confiance vérifiable — par API ou tableau de bord.',
+    'hero.subtitle': 'Vérifiez un statut de décès en quelques secondes via des sources publiques, avec une confiance vérifiable.',
     'hero.primaryCta': 'Demander un accès',
     'hero.secondaryCta': 'Se connecter',
-    'hero.reassurance': 'Import CSV • REST & Webhooks • Journaux d\'audit • SLA 99,9 %',
+    'hero.reassurance': 'Import CSV • Journaux d\'audit • SLA 99,9 %',
     
     // Sensitivity
     'sensitivity.text': 'Nous traitons les recherches sensibles avec soin. Minimisation des DCP, chiffrement en transit et au repos, et pistes d\'audit transparentes. Contrôles alignés SOC 2.',
@@ -100,18 +100,18 @@ const translations = {
     // How it works
     'howItWorks.title': 'Comment ça marche',
     'howItWorks.step1.title': 'Soumettre',
-    'howItWorks.step1.desc': 'Nom + date de naissance (+ 4 derniers chiffres optionnels si autorisé) via API, CSV par lot, ou interface.',
+    'howItWorks.step1.desc': 'Nom + date de naissance (+ 4 derniers chiffres optionnels si autorisé) via CSV par lot ou interface.',
     'howItWorks.step2.title': 'Corrélation',
     'howItWorks.step2.desc': 'Corrélation multi-sources à travers nécrologies publiques, mémoriaux, avis publics et registres autorisés.',
     'howItWorks.step3.title': 'Livrer',
-    'howItWorks.step3.desc': 'Score de confiance, liens de preuves, PDF/CSV exportables, webhooks optionnels.',
+    'howItWorks.step3.desc': 'Score de confiance, liens de preuves, PDF/CSV exportables.',
     
     // Features
     'features.title': 'Fonctionnalités clés',
     'features.coverage': 'Couverture et scoring de confiance',
-    'features.api': 'API + Tableau de bord',
+    'features.api': 'Tableau de bord',
     'features.batch': 'Téléchargements par lot (CSV) et files d\'attente limitées',
-    'features.webhooks': 'Webhooks et détection de changements (listes de surveillance)',
+    'features.webhooks': 'Détection de changements (listes de surveillance)',
     'features.audit': 'Journaux d\'audit et exports (CSV/PDF)',
     'features.access': 'Accès basé sur les rôles et compatible SSO (SAML/OIDC)',
     'features.monitoring': 'Surveillance et disponibilité (page de statut)',
