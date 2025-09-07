@@ -18,6 +18,7 @@ model User {
   lastName       String?
   role           String   @default("USER") // USER | ADMIN
   isActive       Boolean  @default(false) // Admin flips true to grant access
+  approvalStatus String   @default("PENDING_APPROVAL") // PENDING_APPROVAL | APPROVED | REJECTED
   mustReset      Boolean  @default(true)  // force change after temp password
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

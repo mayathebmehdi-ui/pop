@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
         isActive: true, 
         role: true, 
         mustReset: true,
+        approvalStatus: true,
         email: true,
         firstName: true,
         lastName: true
@@ -43,7 +44,8 @@ export async function GET(request: NextRequest) {
       lastName: user.lastName,
       role: user.role,
       isActive: user.isActive,
-      mustReset: user.mustReset
+      mustReset: user.mustReset,
+      approvalStatus: user.approvalStatus
     })
     
   } catch (error) {

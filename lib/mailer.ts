@@ -291,3 +291,255 @@ export async function sendPasswordResetEmail(
     console.log('===============================')
   }
 }
+
+export async function sendAdminNotificationEmail({
+  userEmail,
+  userName,
+  userId
+}: {
+  userEmail: string
+  userName: string
+  userId: string
+}) {
+  const adminEmail = 'peter@publichealthresearch.net'
+  const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin`
+  
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #1a365d; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background: #f8f9fa; }
+        .button { display: inline-block; background: #3182ce; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin: 10px 0; }
+        .user-info { background: white; padding: 15px; border-left: 4px solid #3182ce; margin: 15px 0; }
+        .footer { padding: 20px; text-align: center; font-size: 12px; color: #666; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>🔔 New Account Pending Approval</h1>
+        </div>
+        
+        <div class="content">
+          <p>Hello Peter,</p>
+          
+          <p>A new user has completed their account setup and is awaiting approval to access the Deceased Status verification system.</p>
+          
+          <div class="user-info">
+            <h3>User Details:</h3>
+            <p><strong>Name:</strong> ${userName}</p>
+            <p><strong>Email:</strong> ${userEmail}</p>
+            <p><strong>Account Created:</strong> ${new Date().toLocaleString()}</p>
+            <p><strong>User ID:</strong> ${userId}</p>
+          </div>
+          
+          <p>Please review this account and take appropriate action:</p>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${dashboardUrl}" class="button">
+              🛡️ Review in Admin Dashboard
+            </a>
+          </div>
+          
+          <p><strong>Next Steps:</strong></p>
+          <ol>
+            <li>Log into your admin dashboard</li>
+            <li>Navigate to "Pending Approvals"</li>
+            <li>Review the user's information</li>
+            <li>Approve or reject the account request</li>
+          </ol>
+          
+          <p>The user will be notified once you make your decision.</p>
+        </div>
+        
+        <div class="footer">
+          <p>This is an automated notification from Deceased Status.</p>
+          <p>Please do not reply to this email.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `
+  
+  const textContent = `
+New Account Pending Approval
+
+Hello Peter,
+
+A new user has completed their account setup and is awaiting approval.
+
+User Details:
+- Name: ${userName}
+- Email: ${userEmail}
+- Account Created: ${new Date().toLocaleString()}
+- User ID: ${userId}
+
+Please review this account in your admin dashboard: ${dashboardUrl}
+
+Next Steps:
+1. Log into your admin dashboard
+2. Navigate to "Pending Approvals"
+3. Review the user's information
+4. Approve or reject the account request
+
+The user will be notified once you make your decision.
+  `
+
+  try {
+    if (process.env.RESEND_API_KEY) {
+      console.log('📧 Sending admin notification via Resend...')
+      const { Resend } = await import('resend')
+      const resend = new Resend(process.env.RESEND_API_KEY)
+      
+      await resend.emails.send({
+        from: 'Deceased Status <noreply@deceased-status.com>',
+        to: [adminEmail],
+        subject: `🔔 New Account Pending Approval - ${userName}`,
+        html: htmlContent,
+        text: textContent
+      })
+      
+      console.log(`✅ Admin notification email sent to ${adminEmail}`)
+    } else {
+      console.log('⚠️ No Resend API key configured - Admin notification fallback')
+      console.log('=== ADMIN NOTIFICATION FALLBACK ===')
+      console.log(`To: ${adminEmail}`)
+      console.log(`Subject: New Account Pending Approval - ${userName}`)
+      console.log(`User: ${userName} (${userEmail})`)
+      console.log(`Dashboard: ${dashboardUrl}`)
+      console.log('=====================================')
+    }
+  } catch (error) {
+    console.error('Failed to send admin notification email:', error)
+    throw error
+  }
+}
+
+export async function sendApprovalStatusEmail({
+  userEmail,
+  userName,
+  status,
+  reason
+}: {
+  userEmail: string
+  userName: string
+  status: 'APPROVED' | 'REJECTED'
+  reason?: string
+}) {
+  const isApproved = status === 'APPROVED'
+  const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login`
+  
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: ${isApproved ? '#065f46' : '#7f1d1d'}; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background: #f8f9fa; }
+        .button { display: inline-block; background: ${isApproved ? '#059669' : '#dc2626'}; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin: 10px 0; }
+        .footer { padding: 20px; text-align: center; font-size: 12px; color: #666; }
+        .alert { padding: 15px; border-radius: 4px; margin: 15px 0; }
+        .success { background: #d1fae5; border: 1px solid #10b981; color: #065f46; }
+        .error { background: #fee2e2; border: 1px solid #ef4444; color: #7f1d1d; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>${isApproved ? '✅' : '❌'} Account ${isApproved ? 'Approved' : 'Rejected'}</h1>
+        </div>
+        
+        <div class="content">
+          <p>Hello ${userName},</p>
+          
+          ${isApproved ? `
+            <div class="alert success">
+              <p><strong>Good news!</strong> Your Deceased Status account has been approved.</p>
+            </div>
+            
+            <p>You can now log in and start using our verification services:</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${loginUrl}" class="button">
+                🚀 Log In Now
+              </a>
+            </div>
+            
+            <p>If you have any questions about using the platform, please don't hesitate to contact our support team.</p>
+          ` : `
+            <div class="alert error">
+              <p><strong>We're sorry.</strong> Your Deceased Status account request has not been approved at this time.</p>
+            </div>
+            
+            ${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ''}
+            
+            <p>If you believe this decision was made in error or if you have additional information to provide, please contact our support team.</p>
+          `}
+        </div>
+        
+        <div class="footer">
+          <p>This is an automated notification from Deceased Status.</p>
+          <p>Please do not reply to this email.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `
+  
+  const textContent = `
+Account ${isApproved ? 'Approved' : 'Rejected'}
+
+Hello ${userName},
+
+${isApproved ? `
+Good news! Your Deceased Status account has been approved.
+
+You can now log in and start using our verification services: ${loginUrl}
+
+If you have any questions about using the platform, please don't hesitate to contact our support team.
+` : `
+We're sorry. Your Deceased Status account request has not been approved at this time.
+
+${reason ? `Reason: ${reason}` : ''}
+
+If you believe this decision was made in error or if you have additional information to provide, please contact our support team.
+`}
+  `
+
+  try {
+    if (process.env.RESEND_API_KEY) {
+      console.log(`📧 Sending ${status} notification via Resend...`)
+      const { Resend } = await import('resend')
+      const resend = new Resend(process.env.RESEND_API_KEY)
+      
+      await resend.emails.send({
+        from: 'Deceased Status <noreply@deceased-status.com>',
+        to: [userEmail],
+        subject: `Account ${isApproved ? 'Approved' : 'Rejected'} - Deceased Status`,
+        html: htmlContent,
+        text: textContent
+      })
+      
+      console.log(`✅ ${status} notification email sent to ${userEmail}`)
+    } else {
+      console.log(`⚠️ No Resend API key configured - ${status} notification fallback`)
+      console.log(`=== ${status} NOTIFICATION FALLBACK ===`)
+      console.log(`To: ${userEmail}`)
+      console.log(`Subject: Account ${isApproved ? 'Approved' : 'Rejected'}`)
+      console.log(`Status: ${status}`)
+      if (reason) console.log(`Reason: ${reason}`)
+      console.log('=======================================')
+    }
+  } catch (error) {
+    console.error(`Failed to send ${status} notification email:`, error)
+    throw error
+  }
+}

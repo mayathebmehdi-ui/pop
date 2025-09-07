@@ -21,6 +21,7 @@ export async function middleware(request: NextRequest) {
     pathname === '/request-account' ||
     pathname === '/forgot-password' ||
     pathname === '/reset-password' ||
+    pathname === '/pending-approval' ||
     pathname.startsWith('/static') ||
     pathname === '/favicon.ico' ||
     pathname === '/favicon.svg' ||
@@ -67,6 +68,10 @@ export async function middleware(request: NextRequest) {
       if (!user.isActive) {
         return NextResponse.redirect(buildUrl('/inactive'))
       }
+      // Check approval status for non-admin users
+      if (user.role !== 'ADMIN' && user.approvalStatus === 'PENDING_APPROVAL') {
+        return NextResponse.redirect(buildUrl('/pending-approval'))
+      }
       const target = user.role === 'ADMIN' ? '/admin' : '/app'
       return NextResponse.redirect(buildUrl(target))
     } catch {
@@ -111,6 +116,11 @@ export async function middleware(request: NextRequest) {
     // Check if user is active
     if (!user.isActive) {
       return NextResponse.redirect(buildUrl('/inactive'))
+    }
+    
+    // Check approval status for non-admin users (but not on pending-approval page)
+    if (user.role !== 'ADMIN' && user.approvalStatus === 'PENDING_APPROVAL' && pathname !== '/pending-approval') {
+      return NextResponse.redirect(buildUrl('/pending-approval'))
     }
     
     // Check admin routes

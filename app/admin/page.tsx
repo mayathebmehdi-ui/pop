@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
  
 import { Users, Shield, Mail } from 'lucide-react'
 import { User } from '@/types'
+import { PendingApprovals } from '@/components/admin/pending-approvals'
 
 export default function AdminPage() {
   const [users, setUsers] = useState<User[]>([])
@@ -153,11 +154,21 @@ export default function AdminPage() {
             </p>
           </div>
 
-          {/* Users Management */}
+          {/* Pending Approvals */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
+            className="mb-8"
+          >
+            <PendingApprovals />
+          </motion.div>
+
+          {/* Users Management */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
             className="bg-slate-900/50 rounded-2xl border border-white/10 p-6"
           >
             {loading ? (
