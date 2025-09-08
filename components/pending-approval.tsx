@@ -36,7 +36,9 @@ export function PendingApproval() {
           
           <div className="flex items-center justify-center gap-2 text-sm">
             <Mail className="w-4 h-4" />
-            <span>Notification sent to: <strong>peter@publichealthresearch.net</strong></span>
+            <span>
+              Notification sent to: <strong>{process.env.NEXT_PUBLIC_APPROVER_EMAIL || 'peter@publichealthresearch.net'}</strong>
+            </span>
           </div>
           
           <p className="text-sm">
