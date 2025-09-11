@@ -576,3 +576,127 @@ If you believe this decision was made in error or if you have additional informa
     throw error
   }
 }
+
+// Notify admin immediately when a new account request is submitted
+export async function sendAdminAccountRequestEmail({
+  company,
+  email,
+  useCase,
+  expectedVolume,
+  message,
+  userId,
+  ip,
+  userAgent,
+  createdAt,
+}: {
+  company: string
+  email: string
+  useCase: string
+  expectedVolume: string
+  message?: string
+  userId?: string
+  ip?: string | null
+  userAgent?: string | null
+  createdAt?: string
+}) {
+  const adminEmail = process.env.ADMIN_APPROVER_EMAIL || 'Mehdi.lakhdhar2020@gmail.com'
+  const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin`
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 680px; margin: 0 auto; padding: 20px; }
+        .header { background: #111827; color: white; padding: 18px 20px; text-align: left; }
+        .content { padding: 20px; background: #f9fafb; }
+        .block { background: white; border-left: 4px solid #2563eb; padding: 14px 16px; margin: 12px 0; }
+        .muted { color: #6b7280; font-size: 12px; }
+        .label { display:inline-block; min-width: 160px; color:#374151; font-weight:600; }
+        .button { display: inline-block; background: #2563eb; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; margin: 14px 0; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h2 style="margin:0">📩 New Account Request</h2>
+        </div>
+        <div class="content">
+          <div class="block">
+            <div><span class="label">Company</span> ${company}</div>
+            <div><span class="label">Email</span> ${email}</div>
+            <div><span class="label">Use Case</span> ${useCase}</div>
+            <div><span class="label">Expected Volume</span> ${expectedVolume}</div>
+            ${message ? `<div><span class="label">Message</span> ${message}</div>` : ''}
+            ${userId ? `<div><span class="label">User ID</span> ${userId}</div>` : ''}
+            ${createdAt ? `<div><span class="label">Created At</span> ${createdAt}</div>` : ''}
+            ${ip ? `<div><span class="label">IP</span> ${ip}</div>` : ''}
+            ${userAgent ? `<div><span class="label">User Agent</span> ${userAgent}</div>` : ''}
+          </div>
+
+          <p>Review and approve this account from the admin dashboard:</p>
+          <p>
+            <a href="${dashboardUrl}" class="button">Open Admin Dashboard</a>
+          </p>
+
+          <p class="muted">This is an automated notification from Deceased Status.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `
+
+  const textContent = `New Account Request\n\nCompany: ${company}\nEmail: ${email}\nUse Case: ${useCase}\nExpected Volume: ${expectedVolume}${message ? `\nMessage: ${message}` : ''}${userId ? `\nUser ID: ${userId}` : ''}${createdAt ? `\nCreated At: ${createdAt}` : ''}${ip ? `\nIP: ${ip}` : ''}${userAgent ? `\nUser Agent: ${userAgent}` : ''}\n\nAdmin: ${dashboardUrl}`
+
+  try {
+    let transporter: nodemailer.Transporter | undefined
+    if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+      transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD },
+      })
+    } else if (process.env.SMTP_HOST && process.env.SMTP_USER) {
+      const port = parseInt(process.env.SMTP_PORT || '587')
+      const secure = process.env.SMTP_SECURE === 'true' || port === 465
+      transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port,
+        secure,
+        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASSWORD },
+        logger: true,
+        debug: true,
+      })
+    }
+
+    if (transporter) {
+      await transporter.sendMail({
+        from: `Deceased Status <${process.env.SMTP_FROM || process.env.GMAIL_USER || 'noreply@deceased-status.com'}>`,
+        to: [adminEmail],
+        subject: `New Account Request - ${company}`,
+        html: htmlContent,
+        text: textContent,
+      })
+      console.log(`✅ Admin account request email sent to ${adminEmail} via SMTP`)
+      return
+    }
+
+    if (process.env.RESEND_API_KEY) {
+      const resend = new Resend(process.env.RESEND_API_KEY)
+      await resend.emails.send({
+        from: 'Deceased Status <noreply@deceased-status.com>',
+        to: [adminEmail],
+        subject: `New Account Request - ${company}`,
+        html: htmlContent,
+        text: textContent,
+      })
+      console.log(`✅ Admin account request email sent to ${adminEmail} via Resend`)
+      return
+    }
+
+    console.log('⚠️ No email provider configured for admin account request email')
+  } catch (error) {
+    console.error('Failed to send admin account request email:', error)
+  }
+}

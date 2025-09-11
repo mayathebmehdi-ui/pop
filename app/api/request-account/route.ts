@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createUserWithTempPassword, generateTemporaryPassword } from '@/lib/auth'
-import { sendTempPasswordEmail } from '@/lib/mailer'
+import { sendTempPasswordEmail, sendAdminAccountRequestEmail } from '@/lib/mailer'
 import { db } from '@/lib/db'
 
 export async function POST(request: NextRequest) {
@@ -39,6 +39,22 @@ export async function POST(request: NextRequest) {
     console.log('User Agent:', request.headers.get('user-agent') || 'Unknown')
     console.log('===========================')
     
+    // Notify admin of the incoming request (SMTP/Resend)
+    try {
+      await sendAdminAccountRequestEmail({
+        company,
+        email: normalizedEmail,
+        useCase,
+        expectedVolume,
+        message,
+        ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
+        userAgent: request.headers.get('user-agent'),
+        createdAt: new Date().toISOString(),
+      })
+    } catch (e) {
+      console.error('Admin account request email failed:', e)
+    }
+
     // Create user with a temporary password and send email via SMTP
     let userCreated = false
     let tempPasswordUsed = ''
