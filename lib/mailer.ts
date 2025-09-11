@@ -391,6 +391,39 @@ The user will be notified once you make your decision.
   `
 
   try {
+    // Prefer SMTP if configured (same behavior as temp password emails)
+    let transporter: nodemailer.Transporter | undefined
+    if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+      transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD },
+      })
+    } else if (process.env.SMTP_HOST && process.env.SMTP_USER) {
+      const port = parseInt(process.env.SMTP_PORT || '587')
+      const secure = process.env.SMTP_SECURE === 'true' || port === 465
+      transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port,
+        secure,
+        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASSWORD },
+        logger: true,
+        debug: true,
+      })
+    }
+
+    if (transporter) {
+      await transporter.sendMail({
+        from: `Deceased Status <${process.env.SMTP_FROM || process.env.GMAIL_USER || 'noreply@deceased-status.com'}>`,
+        to: [adminEmail],
+        subject: `🔔 New Account Pending Approval - ${userName}`,
+        html: htmlContent,
+        text: textContent,
+      })
+      console.log(`✅ Admin notification email sent to ${adminEmail} via SMTP`)
+      return
+    }
+
+    // Fallback to Resend if available
     if (process.env.RESEND_API_KEY) {
       console.log('📧 Sending admin notification via Resend...')
       const { Resend } = await import('resend')
