@@ -594,7 +594,7 @@ export async function sendAdminAccountRequestEmail({
   useCase: string
   expectedVolume: string
   message?: string
-  userId?: string
+  userId?: string | null
   ip?: string | null
   userAgent?: string | null
   createdAt?: string
@@ -636,7 +636,7 @@ export async function sendAdminAccountRequestEmail({
             ${userAgent ? `<div><span class="label">User Agent</span> ${userAgent}</div>` : ''}
           </div>
 
-          <p>Review and approve this account from the admin dashboard:</p>
+          <p>Please review and approve this account from the admin dashboard:</p>
           <p>
             <a href="${dashboardUrl}" class="button">Open Admin Dashboard</a>
           </p>

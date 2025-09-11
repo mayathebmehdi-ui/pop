@@ -39,22 +39,6 @@ export async function POST(request: NextRequest) {
     console.log('User Agent:', request.headers.get('user-agent') || 'Unknown')
     console.log('===========================')
     
-    // Notify admin of the incoming request (SMTP/Resend)
-    try {
-      await sendAdminAccountRequestEmail({
-        company,
-        email: normalizedEmail,
-        useCase,
-        expectedVolume,
-        message,
-        ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
-        userAgent: request.headers.get('user-agent'),
-        createdAt: new Date().toISOString(),
-      })
-    } catch (e) {
-      console.error('Admin account request email failed:', e)
-    }
-
     // Create user with a temporary password and send email via SMTP
     let userCreated = false
     let tempPasswordUsed = ''
@@ -99,6 +83,24 @@ export async function POST(request: NextRequest) {
       )
     }
     
+    // Notify admin about the new account request (with details)
+    try {
+      await sendAdminAccountRequestEmail({
+        company,
+        email: normalizedEmail,
+        useCase,
+        expectedVolume,
+        message,
+        userId: (await db.user.findUnique({ where: { email: normalizedEmail }, select: { id: true } }))?.id || null,
+        ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || null,
+        userAgent: request.headers.get('user-agent') || null,
+        createdAt: new Date().toISOString(),
+      })
+      console.log('✅ Admin notification for account request sent')
+    } catch (notifyErr) {
+      console.error('❌ Failed to notify admin about account request:', notifyErr)
+    }
+
     // Small delay for UX consistency
     await new Promise(resolve => setTimeout(resolve, 300))
     
