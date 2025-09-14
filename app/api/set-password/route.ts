@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { verifyPassword, hashPassword, validatePasswordStrength, authenticateUser } from '@/lib/auth'
 import { cookies as nextCookies } from 'next/headers'
-import { sendAdminNotificationEmail } from '@/lib/mailer'
 
 export const dynamic = 'force-dynamic'
 
@@ -183,18 +182,7 @@ export async function POST(request: NextRequest) {
 
     console.log(`✅ First-time password set for user: ${user.email}`)
 
-    // Send notification email to admin
-    try {
-      await sendAdminNotificationEmail({
-        userEmail: user.email,
-        userName: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
-        userId: user.id
-      })
-      console.log(`📧 Admin notification email sent for user: ${user.email}`)
-    } catch (emailError) {
-      console.error('Failed to send admin notification email:', emailError)
-      // Don't fail the request if email fails
-    }
+    // Admin notification email removed per request
 
     // Create response with user info for auto-login
     const response = NextResponse.json({
