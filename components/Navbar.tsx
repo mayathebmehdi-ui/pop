@@ -56,7 +56,6 @@ export function Navbar({ user }: NavbarProps) {
     ? [
         { name: 'Product', href: '#product' },
         { name: 'Data Sources', href: '#data-sources' },
-        { name: 'Pricing', href: '#pricing' },
         { name: 'Compliance', href: '#compliance' },
       ]
     : currentUser?.role === 'ADMIN'
