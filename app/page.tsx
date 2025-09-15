@@ -155,10 +155,10 @@ export default function Home() {
               <h2 className="text-3xl font-bold text-foreground mb-3">The Challenge: Gaps and Fragmentation in Death Data</h2>
               <div className="max-w-3xl mx-auto space-y-3 text-muted-foreground text-lg">
                 <p>
-                  Pinpointing deceased individuals in your records supports operations, fraud controls, and respectful outreach — it is much more than a compliance checkbox.
+                  Pinpointing deceased individuals in your records supports operations, fraud controls, and respectful outreach — it is much more than a checkbox.
                 </p>
                 <p>
-                  Traditional sources fall short. The SSA Death Master File (DMF) is estimated to cover only about 16% of U.S. deaths (Berwyn Group), pushing teams to chase alternative signals amid fragmentation and costly manual review.
+                Traditionally reliable resources fall short. The Social Security Death Index (SSDI) contains fewer than 25% of U.S. deaths in a timely manner as the database is reliant upon third party reporters with little stake in the outcome of the accuracy of reporting. This pushes those who do have a stake in accurate deceased data to chase down alternate solutions or face manual review. 
                 </p>
               </div>
               <p className="text-xs text-muted-foreground mt-2 italic">Source: Berwyn Group analysis of DMF coverage.</p>
@@ -170,7 +170,7 @@ export default function Home() {
               </div>
               <div className="border border-border rounded-xl p-5">
                 <h3 className="text-lg font-semibold mb-2">Scattered, Inconsistent Data</h3>
-                <p className="text-muted-foreground">Signals live across thousands of places, making normalization, consolidation, and cross-checking hard.</p>
+                <p className="text-muted-foreground">records live across thousands of places, making normalization, consolidation, and cross-checking hard.</p>
               </div>
               <div className="border border-border rounded-xl p-5">
                 <h3 className="text-lg font-semibold mb-2">Costly Manual Review</h3>
@@ -229,7 +229,7 @@ export default function Home() {
               <div className="order-2 md:order-1">
                 <h3 className="text-xl font-semibold mb-2">Broad, Compliant Signal Intake</h3>
                 <p className="text-muted-foreground">
-                  Collect and correlate public signals — obituaries, legal notices, and registries — only where permitted.
+                  Collect and correlate public records — obituaries, legal notices, and registries — only where permitted.
                 </p>
               </div>
               <div className="order-1 md:order-2">
@@ -305,8 +305,8 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               <div className="border border-border rounded-xl p-5">
-                <h3 className="text-lg font-semibold mb-2">Wide Signal Coverage</h3>
-                <p className="text-muted-foreground">Ingest diverse public sources where allowed and normalize unstructured signals for verification.</p>
+                <h3 className="text-lg font-semibold mb-2">Wide record Coverage</h3>
+                <p className="text-muted-foreground">Ingest diverse public sources where allowed and normalize unstructured records for verification.</p>
               </div>
               <div className="border border-border rounded-xl p-5">
                 <h3 className="text-lg font-semibold mb-2">Elastic Automation</h3>
@@ -342,7 +342,7 @@ export default function Home() {
               <StepCard
                 icon={FileOutput}
                 title="Return"
-                description="Confidence score, source links, and exports (PDF/CSV)."
+                description="Confidence score and exports (PDF/CSV)."
                 step={3}
                 isLast
               />
@@ -491,72 +491,6 @@ export default function Home() {
           </div>
         </Section>
 
-        {/* Pricing (replacing Integrations) */}
-        <Section id="pricing" className="bg-muted/30">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-foreground mb-4">Pricing</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Simple, transparent plans that grow with your needs.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {/* Starter */}
-            <div className="rounded-2xl border border-border bg-card p-6">
-              <h3 className="text-xl font-semibold mb-2">Starter</h3>
-              <p className="text-muted-foreground mb-4">Pay as you go</p>
-              <div className="text-3xl font-bold mb-6">$0<span className="text-base text-muted-foreground font-normal"> + usage</span></div>
-              <ul className="space-y-2 text-sm text-muted-foreground mb-6">
-                <li>Manual searches</li>
-                <li>CSV batch (up to 1k rows)</li>
-                <li>Email support</li>
-              </ul>
-              <Button asChild className="w-full"><a href="#request-account">Request Account</a></Button>
-            </div>
-            {/* Team */}
-            <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6">
-              <h3 className="text-xl font-semibold mb-2">Team</h3>
-              <p className="text-muted-foreground mb-4">Best for growing teams</p>
-              <div className="text-3xl font-bold mb-6">$199<span className="text-base text-muted-foreground font-normal">/mo</span></div>
-              <ul className="space-y-2 text-sm text-muted-foreground mb-6">
-                <li>Everything in Starter</li>
-                <li>CSV batch (up to 10k rows)</li>
-                <li>Priority processing</li>
-              </ul>
-              <Button asChild className="w-full"><a href="#request-account">Request Account</a></Button>
-            </div>
-            {/* Enterprise */}
-            <div className="rounded-2xl border border-border bg-card p-6">
-              <h3 className="text-xl font-semibold mb-2">Enterprise</h3>
-              <p className="text-muted-foreground mb-4">Custom SLAs & volume</p>
-              <div className="text-3xl font-bold mb-6">Custom</div>
-              <ul className="space-y-2 text-sm text-muted-foreground mb-6">
-                <li>Dedicated infrastructure</li>
-                <li>Custom SLAs</li>
-                <li>Premium support</li>
-              </ul>
-              <Button variant="outline" asChild className="w-full"><a href="#request-account">Contact Sales</a></Button>
-            </div>
-          </div>
-        </Section>
-
-        <Section>
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              Use Cases
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {useCases.map((useCase, index) => (
-              <FeatureCard
-                key={useCase.title}
-                icon={useCase.icon}
-                title={useCase.title}
-                description={useCase.description}
-                index={index}
-              />
-            ))}
-          </div>
-        </Section>
 
         {/* Request Account */}
         <Section id="request-account">
