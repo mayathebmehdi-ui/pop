@@ -301,7 +301,7 @@ export async function sendAdminNotificationEmail({
   userName: string
   userId: string
 }) {
-  const adminEmail = process.env.ADMIN_APPROVER_EMAIL || 'Mehdi.lakhdhar2020@gmail.com'
+  const adminEmail = process.env.ADMIN_APPROVER_EMAIL || 'support@deceasedstatus.com'
   const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin`
   
   const htmlContent = `
