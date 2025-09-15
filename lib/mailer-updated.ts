@@ -75,7 +75,7 @@ async function sendViaResend(email: string, tempPassword: string, firstName?: st
     const { Resend } = await import('resend')
     const resend = new Resend(process.env.RESEND_API_KEY)
     
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://deceasedstatus.com'
     
     await resend.emails.send({
       from: 'Deceased Status <noreply@deceased-status.com>',
@@ -93,7 +93,7 @@ async function sendViaResend(email: string, tempPassword: string, firstName?: st
 
 // Envoi via console (développement)
 async function sendViaConsole(email: string, tempPassword: string, firstName?: string): Promise<void> {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://deceasedstatus.com'
   
   console.log('=== EMAIL CONSOLE OUTPUT ===')
   console.log(`📧 To: ${email}`)

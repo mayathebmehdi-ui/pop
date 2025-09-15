@@ -10,7 +10,7 @@ export async function sendTempPasswordEmail(
   tempPassword: string,
   firstName?: string
 ): Promise<void> {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://deceasedstatus.com'
   
   // Template HTML premium
   const htmlContent = `
@@ -219,7 +219,7 @@ export async function sendPasswordResetEmail(
   resetToken: string,
   firstName?: string
 ): Promise<void> {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://deceasedstatus.com'
   const resetUrl = `${appUrl}/reset-password?token=${resetToken}`
   
   const htmlContent = `
@@ -302,7 +302,7 @@ export async function sendAdminNotificationEmail({
   userId: string
 }) {
   const adminEmail = process.env.ADMIN_APPROVER_EMAIL || 'support@deceasedstatus.com'
-  const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin`
+  const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://deceasedstatus.com'}/admin`
   
   const htmlContent = `
     <!DOCTYPE html>
@@ -465,7 +465,7 @@ export async function sendApprovalStatusEmail({
   reason?: string
 }) {
   const isApproved = status === 'APPROVED'
-  const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login`
+  const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://deceasedstatus.com'}/login`
   
   const htmlContent = `
     <!DOCTYPE html>
@@ -600,7 +600,7 @@ export async function sendAdminAccountRequestEmail({
   createdAt?: string
 }) {
   const adminEmail = process.env.ADMIN_APPROVER_EMAIL || 'Mehdi.lakhdhar2020@gmail.com'
-  const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin`
+  const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://deceasedstatus.com'}/admin`
 
   const htmlContent = `
     <!DOCTYPE html>

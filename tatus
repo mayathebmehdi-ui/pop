@@ -1,0 +1,5 @@
+[33m31eb3f9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Fix timeout issues in account creation
+[33mce43a32[m Add duplicate email validation - prevent creating accounts with existing emails
+[33m34041f4[m chore: content updates on landing
+[33m419dcd9[m chore(nav): remove Pricing from navbar
+[33m4d6ad5a[m chore: landing copy tweaks

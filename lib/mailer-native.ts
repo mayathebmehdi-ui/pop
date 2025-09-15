@@ -110,7 +110,7 @@ export async function sendEmailNativeSMTP(
   tempPassword: string,
   firstName?: string
 ): Promise<void> {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://deceasedstatus.com'
   
   const htmlContent = `
 <!DOCTYPE html>
@@ -202,7 +202,7 @@ export async function sendEmailSimulated(
   tempPassword: string,
   firstName?: string
 ): Promise<void> {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://deceasedstatus.com'
   
   // Simule un délai d'envoi
   await new Promise(resolve => setTimeout(resolve, 1000))

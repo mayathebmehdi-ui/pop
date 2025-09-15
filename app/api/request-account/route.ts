@@ -90,23 +90,28 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    // Notify admin about the new account request (with details)
-    try {
-      await sendAdminAccountRequestEmail({
-        company,
-        email: normalizedEmail,
-        useCase,
-        expectedVolume,
-        message,
-        userId: (await db.user.findUnique({ where: { email: normalizedEmail }, select: { id: true } }))?.id || null,
-        ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || null,
-        userAgent: request.headers.get('user-agent') || null,
-        createdAt: new Date().toISOString(),
-      })
-      console.log('✅ Admin notification for account request sent')
-    } catch (notifyErr) {
-      console.error('❌ Failed to notify admin about account request:', notifyErr)
-    }
+    // Notify admin about the new account request (with details) - fire-and-forget
+    ;(async () => {
+      try {
+        await Promise.race([
+          sendAdminAccountRequestEmail({
+            company,
+            email: normalizedEmail,
+            useCase,
+            expectedVolume,
+            message,
+            userId: (await db.user.findUnique({ where: { email: normalizedEmail }, select: { id: true } }))?.id || null,
+            ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || null,
+            userAgent: request.headers.get('user-agent') || null,
+            createdAt: new Date().toISOString(),
+          }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Admin email timeout')), 8000)),
+        ])
+        console.log('✅ Admin notification for account request sent')
+      } catch (notifyErr) {
+        console.error('❌ Failed to notify admin about account request:', notifyErr)
+      }
+    })()
 
     // Small delay for UX consistency
     await new Promise(resolve => setTimeout(resolve, 300))
