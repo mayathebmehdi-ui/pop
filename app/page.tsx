@@ -227,7 +227,7 @@ export default function Home() {
               className="grid grid-cols-1 md:grid-cols-2 items-center gap-6"
             >
               <div className="order-2 md:order-1">
-                <h3 className="text-xl font-semibold mb-2">Broad, Compliant Signal Intake</h3>
+                <h3 className="text-xl font-semibold mb-2">Broad, Compliant record Intake</h3>
                 <p className="text-muted-foreground">
                   Collect and correlate public records — obituaries, legal notices, and registries — only where permitted.
                 </p>
