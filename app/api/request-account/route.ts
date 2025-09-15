@@ -39,44 +39,40 @@ export async function POST(request: NextRequest) {
     console.log('User Agent:', request.headers.get('user-agent') || 'Unknown')
     console.log('===========================')
     
+    // Prevent duplicate accounts (unique email)
+    const existing = await db.user.findUnique({ where: { email: normalizedEmail } })
+    if (existing) {
+      return NextResponse.json(
+        { error: 'Account is already created with this email' },
+        { status: 409 }
+      )
+    }
+
     // Create user with a temporary password and send email via SMTP
     let userCreated = false
     let tempPasswordUsed = ''
-    
+
     try {
       console.log('🔧 Creating user with temp password for:', normalizedEmail)
       const { user, tempPassword } = await createUserWithTempPassword({ email: normalizedEmail })
       tempPasswordUsed = tempPassword
-      
+
       console.log('✅ User created in DB:', user.id)
       console.log('🔑 Temp password generated:', tempPassword)
-      
+
       await sendTempPasswordEmail(user.email, tempPassword)
       console.log('✅ Temp password email sent to:', user.email)
       userCreated = true
-      
     } catch (err) {
       console.error('❌ Failed to create user in DB:', err)
-      
-      // Check if user already exists
-      const existingUser = await db.user.findUnique({
-        where: { email: normalizedEmail }
-      }).catch(() => null)
-      
-      if (existingUser) {
-        console.log('ℹ️ User already exists, not creating duplicate')
-        userCreated = true
-      } else {
-        console.error('💥 CRITICAL: User creation failed and no existing user found!')
-        return NextResponse.json(
-          { error: 'Failed to create account. Please try again or contact support.' },
-          { status: 500 }
-        )
-      }
+      return NextResponse.json(
+        { error: 'Failed to create account. Please try again or contact support.' },
+        { status: 500 }
+      )
     }
     
     if (!userCreated) {
-      console.error('💥 CRITICAL: No user was created or found!')
+      console.error('💥 CRITICAL: No user was created!')
       return NextResponse.json(
         { error: 'Account creation failed. Please contact support.' },
         { status: 500 }

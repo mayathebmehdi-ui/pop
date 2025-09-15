@@ -73,7 +73,15 @@ export default function RequestAccountPage() {
           message: '',
         })
       } else {
-        throw new Error('Failed to submit request')
+        const data = await response.json().catch(() => ({}))
+        if (response.status === 409) {
+          setErrors({ email: data.error || 'Account is already created with this email' })
+        } else if (data?.error) {
+          setErrors({ submit: data.error })
+        } else {
+          setErrors({ submit: 'Failed to submit request. Please try again.' })
+        }
+        return
       }
     } catch (error) {
       console.error('Error submitting form:', error)
