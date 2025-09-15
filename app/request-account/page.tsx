@@ -55,13 +55,20 @@ export default function RequestAccountPage() {
     }
 
     try {
+      // Add timeout to prevent hanging
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
+
       const response = await fetch('/api/request-account', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
+        signal: controller.signal,
       })
+
+      clearTimeout(timeoutId)
 
       if (response.ok) {
         setIsSuccess(true)
@@ -85,7 +92,11 @@ export default function RequestAccountPage() {
       }
     } catch (error) {
       console.error('Error submitting form:', error)
-      setErrors({ submit: 'Failed to submit request. Please try again.' })
+      if (error instanceof Error && error.name === 'AbortError') {
+        setErrors({ submit: 'Request timed out. Please try again or contact support if the problem persists.' })
+      } else {
+        setErrors({ submit: 'Failed to submit request. Please try again.' })
+      }
     } finally {
       setIsSubmitting(false)
     }

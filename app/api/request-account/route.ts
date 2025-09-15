@@ -60,8 +60,19 @@ export async function POST(request: NextRequest) {
       console.log('✅ User created in DB:', user.id)
       console.log('🔑 Temp password generated:', tempPassword)
 
-      await sendTempPasswordEmail(user.email, tempPassword)
-      console.log('✅ Temp password email sent to:', user.email)
+      // Try to send email with timeout, but don't fail account creation if email fails
+      try {
+        await Promise.race([
+          sendTempPasswordEmail(user.email, tempPassword),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Email timeout')), 10000)
+          )
+        ])
+        console.log('✅ Temp password email sent to:', user.email)
+      } catch (emailErr) {
+        console.error('⚠️ Email sending failed, but account created:', emailErr)
+        // Don't fail the whole process if email fails
+      }
       userCreated = true
     } catch (err) {
       console.error('❌ Failed to create user in DB:', err)
